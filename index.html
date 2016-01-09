@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>YouTubeQueue</title>
+	<link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+	<style type="text/css">
+		body {
+			cursor: default;
+			margin: 0;
+			padding: 0;
+		}
+		button {
+			cursor: pointer;
+		}
+		li, button, input, span {
+			font-family: sans-serif;
+			font-size: 1em;
+			line-height: 1.4em;
+		}
+		button:hover {
+			background: rgba(0, 0, 0, 0.5);
+		}
+		button, input {
+			margin-right: 11px;
+			padding: 15px;
+			border: none;
+			border-radius: 2px;
+			outline: none;
+			background: rgba(0, 0, 0, 0.3);
+		}
+		input {
+			width: 290px;
+			border-left: solid 3px transparent;
+		}
+		input:focus {
+			border-color: #1DD1AA;
+		}
+		ul {
+			list-style: none;
+			padding: 0;
+			border-top: solid 1px rgba(0, 0, 0, 0.2);
+		}
+		ul li {
+			border-bottom: solid 1px rgba(0, 0, 0, 0.2);
+			padding: 15px;
+		}
+		ul li div {
+			display: inline-block;
+			vertical-align: top;
+		}
+		ul li img {
+			margin-right: 15px;
+		}
+		#search-container {
+			position: absolute;
+			width: 60%;
+			padding-top: 66px;
+		}
+		#search-container .search, #search-container .search span {
+			background: #1DD1AA;
+			color: #222;
+		}
+		#search-container .search:hover, #search-container .search:hover span {
+			background: #0DFCC8;
+		}
+		#search-container li:hover {
+			cursor: pointer;
+			background: rgba(0, 0, 0, 0.1);
+		}
+		#player-container {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: 40%;
+			padding-top: 99px;
+			background: rgba(0, 0, 0, 0.05);
+		}
+		#player {
+			max-width: 90%;
+			margin-left: 15px;
+			margin-bottom: 7px;
+		}
+		header {
+			position: fixed;
+			width: 100%;
+			top: 0;
+			padding: 15px;
+			/*border-bottom: solid 1px #CCC;*/
+			background: #222;
+		}
+		header * {
+			color: white;
+		}
+		header span {
+			padding-right: 15px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	<div id="search-container">
+		<header>
+			<input id="query" type="text" placeholder="Search">
+			<button onclick="search()" class="search"><span class="ion ion-search"></span>Search</button>
+			<button onclick="next()"><span class="ion ion-ios-fastforward"></span>Next</button>
+			<button onclick="stop()"><span class="ion ion-stop"></span>Stop</button>
+			<!-- <button onclick="clearQueue()"><span class="ion ion-close"></span>Clear</button> -->
+			<span id="title"></span>
+		</header>
+		<ul id="list"></ul>
+	</div>
+	<div id="player-container">
+		<div><div id="player"></div></div>
+		<ul id="queue"></ul>
+	</div>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script src="http://momentjs.com/downloads/moment.min.js"></script>
+	<script>
+		var apiKey = 'AIzaSyBVd3lrN8o2RpRhVSkQWcVGrjsxbZGgs4g'
+		var $list = $('#list')
+		var $queue = $('#queue')
+		var $title = $('#title')
+		var queue = []
+		var player
+
+		function init() {
+			gapi.client.setApiKey(apiKey)
+			gapi.client.load('youtube', 'v3')
+		}
+
+		function renderQueue() {
+			$queue.html('')
+			queue.forEach(function(item) {
+				$queue.append('<li>' + item.title + '</li>')
+			})
+		}
+
+		function search() {
+			var q = $('#query').val();
+			var request = gapi.client.youtube.search.list({
+				q: q,
+				part: 'snippet',
+				maxResults: 50
+			});
+
+			request.execute(function(response) {
+				$(document).scrollTop(0)
+				$list.html('')
+				response.items.forEach(function(item) {
+					if(item.id.kind === 'youtube#video') {
+						var date = moment(item.snippet.publishedAt).fromNow()
+						$list.append('<li data-id="' + item.id.videoId + '" data-title="' + item.snippet.title + '">' +
+							'<img src="' + item.snippet.thumbnails.medium.url + '"><div>' +
+							'<b>' + item.snippet.title + '</b><br>' + date + '<br>' + item.snippet.channelTitle + '</div></li>')
+					}
+				})
+			});
+		}
+
+		function next() {
+			var item = queue.shift()
+			if(item) {
+				$title.text(item.title)
+				player.loadVideoById(item.id, 0)
+			} else {
+				player.loadVideoById('')
+			}
+			renderQueue()
+		}
+
+		function stop() {
+			$title.text('')
+			player.stopVideo()
+		}
+
+		function clearQueue() {
+			stop()
+			queue = []
+			next()
+		}
+
+		$list.on('click', 'li', function() {
+			var $item = $(this)
+			var id = $item.attr('data-id')
+			queue.push({
+				id: id,
+				title: $item.attr('data-title')
+			})
+			renderQueue()
+			if(player.getPlayerState() != 1) next()
+		})
+
+		var tag = document.createElement('script');
+
+		tag.src = "https://www.youtube.com/iframe_api"
+		var firstScriptTag = document.getElementsByTagName('script')[0]
+		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+
+		function onYouTubeIframeAPIReady() {
+			player = new YT.Player('player', {
+				height: '390',
+				width: '640',
+				playerVars: {
+					// controls: 0
+				},
+				events: {
+					'onStateChange': onPlayerStateChange
+				}
+			})
+		}
+
+		function onPlayerStateChange(event) {
+			if(event.data == YT.PlayerState.ENDED) next()
+		}
+
+		$(document).keydown(function(e) {
+			if(e.keyCode === 13) {
+				search()
+			}
+		})
+	</script>
+	<script src="https://apis.google.com/js/client.js?onload=init"></script>
+</body>
+</html>
