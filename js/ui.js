@@ -1,7 +1,6 @@
 (function(global) {
 	'use strict'
 
-	var $search = $('#search')
 	var $query  = $('#query')
 	var $next   = $('#next')
 	var $stop   = $('#stop')
@@ -20,17 +19,17 @@
 			if(video) events.trigger('ui', 'queueVideo', video)
 		})
 
-		$search.on('click', () => {
-			var query = $query.val()
-			if(query) events.trigger('ui', 'search', query)
-		})
-
 		$next.on('click', () => {
 			events.trigger('ui', 'next')
 		})
 
 		$stop.on('click', () => {
 			events.trigger('ui', 'stop')
+		})
+
+		$query.keyup(function(e) {
+			var query = $query.val()
+			if(query) events.trigger('ui', 'search', query)
 		})
 	}
 
