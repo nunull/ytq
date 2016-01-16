@@ -22,6 +22,10 @@
 			if(yt.player.getState() != 1) playNext()
 		})
 
+		ui.on('query', (query) => {
+			yt.completeQuery(query).then(ui.render.searchSuggestions)
+		})
+
 		ui.on('search', (query) => {
 			yt.search(query).then(ui.render.searchResults)
 		})

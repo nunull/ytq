@@ -93,9 +93,25 @@
 		return deferred
 	}
 
+	function completeQuery(query) {
+		var deferred = $.Deferred()
+
+		$.ajax({
+			url: 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&q=' + query,
+			dataType: 'jsonp',
+			success: function(data) {
+				var suggestions = data[1].map((suggestion) => suggestion[0])
+				deferred.resolve(suggestions)
+			}
+		})
+
+		return deferred
+	}
+
 	global.yt = {
 		init: init,
 		search: search,
+		completeQuery: completeQuery,
 		player: player
 	}
 })(window)

@@ -57,6 +57,20 @@ ul li img {
 #search-container .search:hover, #search-container .search:hover span {
 	background: #0DFCC8;
 }
+#search-container .awesomplete ul {
+	background: #222;
+	transition: none;
+}
+#search-container .awesomplete ul:before {
+	display: none;
+}
+#search-container .awesomplete ul li {
+	padding: 15px;
+}
+#search-container .awesomplete ul li mark {
+	opacity: 0.5;
+	background: none;
+}
 #search-container li:hover {
 	cursor: pointer;
 	background: rgba(0, 0, 0, 0.1);
@@ -80,7 +94,6 @@ header {
 	width: 100%;
 	top: 0;
 	padding: 15px;
-	/*border-bottom: solid 1px #CCC;*/
 	background: #222;
 }
 header * {

@@ -1,17 +1,21 @@
 (function(global) {
 	'use strict'
 
-	var $query  = $('#query')
-	var $next   = $('#next')
-	var $stop   = $('#stop')
-	var $list   = $('#list')
-	var $queue  = $('#queue')
-	var $title  = $('#title')
+	var $query = $('#query')
+	var $next  = $('#next')
+	var $stop  = $('#stop')
+	var $list  = $('#list')
+	var $queue = $('#queue')
+	var $title = $('#title')
+	var queryAwesomplete
 	var state = {
-		videos: []
+		videos: [],
+		query: ''
 	}
 
 	function init() {
+		queryAwesomplete = new Awesomplete($query[0])
+
 		$list.on('click', 'li', (e) => {
 			var id = $(e.target).attr('data-id')
 			var video = state.videos.find((video) => id === video.id)
@@ -29,7 +33,16 @@
 
 		$query.keyup(function(e) {
 			var query = $query.val()
-			if(query) events.trigger('ui', 'search', query)
+			if(query) {
+				if(e.keyCode === 13) {
+					queryAwesomplete.close()
+					events.trigger('ui', 'search', query)
+				} else if(query !== state.query) {
+					events.trigger('ui', 'query', query)
+				}
+			}
+
+			if(state.query !== query) state.query = query
 		})
 	}
 
@@ -52,6 +65,10 @@
 		})
 	}
 
+	function renderSearchSuggestions(suggestions) {
+		queryAwesomplete.list = suggestions
+	}
+
 	function renderTitle(title) {
 		$title.text(title)
 	}
@@ -67,6 +84,7 @@
 		render: {
 			queue: renderQueue,
 			searchResults: renderSearchResults,
+			searchSuggestions: renderSearchSuggestions,
 			title: renderTitle
 		},
 		helper: {
