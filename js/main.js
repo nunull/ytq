@@ -3,7 +3,17 @@
 
 	function playNext() {
 		var next = queue.pop()
-		if(next) yt.player.play(next)
+		if(next) {
+			ui.render.title(next.title)
+			yt.player.play(next)
+		} else {
+			ui.render.title('')
+		}
+	}
+
+	function stop() {
+		ui.render.title('')
+		yt.player.stop()
 	}
 
 	yt.init().then(function() {
@@ -17,7 +27,7 @@
 		})
 
 		ui.on('next', playNext)
-		ui.on('stop', yt.player.stop)
+		ui.on('stop', stop)
 
 		queue.on('change', () => {
 			ui.render.queue(queue)

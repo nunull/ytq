@@ -52,6 +52,10 @@
 		})
 	}
 
+	function renderTitle(title) {
+		$title.text(title)
+	}
+
 	function loadScript(url) {
 		$(document).append($('<script></script>').attr('src', url))
 	}
@@ -62,7 +66,8 @@
 		on: events.init('ui'),
 		render: {
 			queue: renderQueue,
-			searchResults: renderSearchResults
+			searchResults: renderSearchResults,
+			title: renderTitle
 		},
 		helper: {
 			loadScript: loadScript
