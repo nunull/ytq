@@ -16,7 +16,15 @@
 		yt.player.stop()
 	}
 
-	yt.init().then(function() {
+	function restore() {
+		var storedVideos = memento.get('queue')
+		if(storedVideos) {
+			storedVideos.forEach((storedVideo) => queue.push(storedVideo))
+			playNext()
+		}
+	}
+
+	yt.init().then(() => {
 		ui.on('queueVideo', (video) => {
 			queue.push(video)
 			if(yt.player.getState() != 1) playNext()
@@ -35,10 +43,17 @@
 
 		queue.on('change', () => {
 			ui.render.queue(queue)
+			memento.put('queue', queue.items())
 		})
 
 		yt.player.on('ended', playNext)
 
-		if(helpers.urlParam('debug')) $('#query').val('blawan').keyup()
+		restore()
+
+		if(helpers.urlParam('debug')) {
+			var e = $.Event('keyup');
+			e.keyCode = 13
+			$('#query').val('blawan').trigger(e)
+		}
 	})
 })()
