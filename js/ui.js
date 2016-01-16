@@ -17,7 +17,7 @@
 		queryAwesomplete = new Awesomplete($query[0])
 
 		$list.on('click', 'li', (e) => {
-			var id = $(e.target).attr('data-id')
+			var id = $(e.currentTarget).attr('data-id')
 			var video = state.videos.find((video) => id === video.id)
 
 			if(video) events.trigger('ui', 'queueVideo', video)
