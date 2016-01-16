@@ -24,5 +24,7 @@
 		})
 
 		yt.player.on('ended', playNext)
+
+		if(helpers.urlParam('debug')) $('#query').val('blawan').keyup()
 	})
 })()
