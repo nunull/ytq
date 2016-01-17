@@ -18,7 +18,7 @@
 
 		$list.on('click', 'li', function(e) {
 			var id = $(e.currentTarget).attr('data-id')
-			var video = state.videos.find(function(video) {id === video.id})
+			var video = state.videos.find(function(video) {return id === video.id})
 
 			if(video) events.trigger('ui', 'queueVideo', video)
 		})

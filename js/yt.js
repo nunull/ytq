@@ -68,7 +68,7 @@
 	}
 
 	function search(q) {
-		var videoFilter = function(item) {item.id.kind === 'youtube#video'}
+		var videoFilter = function(item) {return item.id.kind === 'youtube#video'}
 		var videoMapper = function(item) {
 			return {
 				id: item.id.videoId,
@@ -100,7 +100,7 @@
 			url: 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&q=' + query,
 			dataType: 'jsonp',
 			success: function(data) {
-				var suggestions = data[1].map(function(suggestion) {suggestion[0]})
+				var suggestions = data[1].map(function(suggestion) {return suggestion[0]})
 				deferred.resolve(suggestions)
 			}
 		})
