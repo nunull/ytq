@@ -12,7 +12,7 @@
 		function init() {
 			ui.helper.loadScript('https://www.youtube.com/iframe_api')
 
-			global.onYouTubeIframeAPIReady = () => {
+			global.onYouTubeIframeAPIReady = function() {
 				player = new YT.Player('player', {
 					height: '390',
 					width: '640',
@@ -59,7 +59,7 @@
 		initDeferred = $.Deferred()
 
 		player.init()
-		global.ytInitApi = () => {
+		global.ytInitApi = function() {
 			gapi.client.setApiKey(apiKey)
 			gapi.client.load('youtube', 'v3', initDeferred.resolve)
 		}
@@ -68,8 +68,8 @@
 	}
 
 	function search(q) {
-		var videoFilter = (item) => item.id.kind === 'youtube#video'
-		var videoMapper = (item) => {
+		var videoFilter = function(item) {item.id.kind === 'youtube#video'}
+		var videoMapper = function(item) {
 			return {
 				id: item.id.videoId,
 				title: item.snippet.title,
@@ -100,7 +100,7 @@
 			url: 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&q=' + query,
 			dataType: 'jsonp',
 			success: function(data) {
-				var suggestions = data[1].map((suggestion) => suggestion[0])
+				var suggestions = data[1].map(function(suggestion) {suggestion[0]})
 				deferred.resolve(suggestions)
 			}
 		})

@@ -16,18 +16,18 @@
 	function init() {
 		queryAwesomplete = new Awesomplete($query[0])
 
-		$list.on('click', 'li', (e) => {
+		$list.on('click', 'li', function(e) {
 			var id = $(e.currentTarget).attr('data-id')
-			var video = state.videos.find((video) => id === video.id)
+			var video = state.videos.find(function(video) {id === video.id})
 
 			if(video) events.trigger('ui', 'queueVideo', video)
 		})
 
-		$next.on('click', () => {
+		$next.on('click', function() {
 			events.trigger('ui', 'next')
 		})
 
-		$stop.on('click', () => {
+		$stop.on('click', function() {
 			events.trigger('ui', 'stop')
 		})
 
@@ -58,7 +58,7 @@
 
 		$(document).scrollTop(0)
 		$list.html('')
-		videos.forEach((video) => {
+		videos.forEach(function(video) {
 			$list.append('<li data-id="' + video.id + '">' +
 				'<img src="' + video.thumbnail + '"><div>' +
 				'<b>' + video.title + '</b><br>' + video.publishedAt + '<br>' + video.channel + '</div></li>')

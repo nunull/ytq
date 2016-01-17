@@ -19,29 +19,29 @@
 	function restore() {
 		var storedVideos = memento.get('queue')
 		if(storedVideos) {
-			storedVideos.forEach((storedVideo) => queue.push(storedVideo))
+			storedVideos.forEach(function(storedVideo) {queue.push(storedVideo)})
 			playNext()
 		}
 	}
 
-	yt.init().then(() => {
-		ui.on('queueVideo', (video) => {
+	yt.init().then(function() {
+		ui.on('queueVideo', function(video) {
 			queue.push(video)
 			if(yt.player.getState() != 1) playNext()
 		})
 
-		ui.on('query', (query) => {
+		ui.on('query', function(query) {
 			yt.completeQuery(query).then(ui.render.searchSuggestions)
 		})
 
-		ui.on('search', (query) => {
+		ui.on('search', function(query) {
 			yt.search(query).then(ui.render.searchResults)
 		})
 
 		ui.on('next', playNext)
 		ui.on('stop', stop)
 
-		queue.on('change', () => {
+		queue.on('change', function() {
 			ui.render.queue(queue)
 			memento.put('queue', queue.items())
 		})
