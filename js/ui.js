@@ -10,6 +10,7 @@
 	var queryAwesomplete
 	var state = {
 		videos: [],
+		queue: [],
 		query: ''
 	}
 
@@ -21,6 +22,13 @@
 			var video = state.videos.find(function(video) {return id === video.id})
 
 			if(video) events.trigger('ui', 'queueVideo', video)
+		})
+
+		$queue.on('click', '.remove-item', function(e) {
+			var id = $(e.currentTarget).attr('data-id')
+			var item = state.queue.find(function(item) {return id === item.id})
+
+			if(item) events.trigger('ui', 'removeItem', item)
 		})
 
 		$next.on('click', function() {
@@ -47,9 +55,11 @@
 	}
 
 	function renderQueue(queue) {
+		state.queue = queue.items()
+
 		$queue.html('')
 		queue.forEach(function(item) {
-			$queue.append('<li>' + item.title + '</li>')
+			$queue.append('<li><nav><a class="remove-item" data-id="' + item.id + '">Remove</a></nav>' + item.title + '</li>')
 		})
 	}
 

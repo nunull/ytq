@@ -30,6 +30,10 @@
 			if(yt.player.getState() != 1) playNext()
 		})
 
+		ui.on('removeItem', function(item) {
+			queue.remove(item)
+		})
+
 		ui.on('query', function(query) {
 			yt.completeQuery(query).then(ui.render.searchSuggestions)
 		})

@@ -3,7 +3,7 @@ body {
 	margin: 0;
 	padding: 0;
 }
-button {
+button, a {
 	cursor: pointer;
 }
 li, button, input, span, a {
@@ -42,6 +42,15 @@ ul li {
 ul li div {
 	display: inline-block;
 	vertical-align: top;
+}
+ul li nav {
+	position: absolute;
+	display: none;
+	text-align: right;
+	right: 15px;
+}
+ul li:hover nav {
+	display: inline-block;
 }
 ul li img {
 	margin-right: 15px;

@@ -16,6 +16,12 @@
 		return item
 	}
 
+	function remove(item) {
+		queue.splice(queue.indexOf(item), 1)
+		events.trigger('queue', 'remove', item)
+		events.trigger('queue', 'change', queue)
+	}
+
 	function items() {
 		return queue
 	}
@@ -28,6 +34,7 @@
 		on: events.init('queue'),
 		push: push,
 		pop: pop,
+		remove: remove,
 		items: items,
 		forEach: forEach
 	}
